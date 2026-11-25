@@ -124,15 +124,13 @@ async def lifespan(app: FastAPI):
         except asyncio.CancelledError:
             pass
 
-is_prod = settings.ENV.lower() == "production"
-
 app = FastAPI(
     title="Library Management API",
     version="1.0.0",
     lifespan=lifespan,
-    docs_url=None if is_prod else "/docs",
-    redoc_url=None if is_prod else "/redoc",
-    openapi_url=None if is_prod else "/openapi.json",
+    docs_url=None,
+    redoc_url=None,
+    openapi_url=None,
 )
 
 allowed_origins = [o.strip().rstrip("/") for o in settings.ALLOWED_ORIGINS.split(",") if o.strip()]
