@@ -25,6 +25,7 @@ export default function StaffPage() {
   const [fullName, setFullName] = useState("");
   const [department, setDepartment] = useState("");
   const [phone, setPhone] = useState("");
+  const [createError, setCreateError] = useState<string | null>(null);
 
   const fetchStaff = async () => {
     setLoading(true);
@@ -56,6 +57,7 @@ export default function StaffPage() {
 
   const handleCreateStaff = async (e: React.FormEvent) => {
     e.preventDefault();
+    setCreateError(null);
     try {
       await api.post("/users/staff", {
         full_name: fullName.trim(),
@@ -68,7 +70,7 @@ export default function StaffPage() {
       setPhone("");
       fetchStaff();
     } catch (err: any) {
-      alert(err.response?.data?.detail || "Xatolik yuz berdi");
+      setCreateError(err.response?.data?.detail || "Xatolik yuz berdi");
     }
   };
 
@@ -225,6 +227,11 @@ export default function StaffPage() {
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 backdrop-blur-sm p-4">
           <div className="w-full max-w-md rounded-2xl border border-paper-border bg-white p-6 shadow-card space-y-4">
             <h3 className="text-base font-bold text-oak-900">{t.registerStaff}</h3>
+            {createError && (
+              <div className="rounded-lg border border-red-200 bg-red-50 px-3 py-2 text-xs text-red-700">
+                {createError}
+              </div>
+            )}
             <form onSubmit={handleCreateStaff} className="space-y-4">
               <div>
                 <label className="block text-xs font-semibold text-oak-700 mb-1">F.I.SH.</label>

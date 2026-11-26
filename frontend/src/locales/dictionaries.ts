@@ -212,6 +212,9 @@ export interface Dictionary {
   issueBooksSuccess: string;
   batchIssuingBooks: string;
   batchIssueButton: string;
+  yesReturnBook: string;
+  yesDelete: string;
+  confirmAction: string;
 }
 
 export const dictionaries: Record<Language, Dictionary> = {
@@ -427,6 +430,9 @@ export const dictionaries: Record<Language, Dictionary> = {
     issueBooksSuccess: "Kitoblar muvaffaqiyatli berildi!",
     batchIssuingBooks: "Kitoblar rasmiylashtirilmoqda...",
     batchIssueButton: "Kitoblarni berish",
+    yesReturnBook: "Ha, kitobni qaytarish",
+    yesDelete: "Ha, o'chirish",
+    confirmAction: "Tasdiqlash",
   },
   ru: {
     appName: "Библиотека",
@@ -640,6 +646,9 @@ export const dictionaries: Record<Language, Dictionary> = {
     issueBooksSuccess: "Книги успешно выданы!",
     batchIssuingBooks: "Оформление выдачи...",
     batchIssueButton: "Выдать книги",
+    yesReturnBook: "Да, вернуть книгу",
+    yesDelete: "Да, удалить",
+    confirmAction: "Подтвердить",
   },
   en: {
     appName: "Library Ops",
@@ -853,5 +862,8 @@ export const dictionaries: Record<Language, Dictionary> = {
     issueBooksSuccess: "Books successfully issued!",
     batchIssuingBooks: "Processing loan...",
     batchIssueButton: "Issue Books",
+    yesReturnBook: "Yes, return book",
+    yesDelete: "Yes, delete",
+    confirmAction: "Confirm",
   },
 };

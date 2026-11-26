@@ -5,6 +5,7 @@ import api from "@/lib/api";
 import { Borrowing, BorrowingCountsSummary, PaginatedResponse } from "@/lib/types";
 import { Pagination } from "@/components/Pagination";
 import { CopyPhone } from "@/components/CopyPhone";
+import { ConfirmModal } from "@/components/ConfirmModal";
 import { useLanguage } from "@/context/LanguageContext";
 import {
   BookOpen,
@@ -27,6 +28,7 @@ export default function BorrowingsPage() {
   });
   const [loading, setLoading] = useState(true);
   const [returningId, setReturningId] = useState<number | null>(null);
+  const [returningBorrowing, setReturningBorrowing] = useState<Borrowing | null>(null);
 
   const [page, setPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
@@ -86,15 +88,15 @@ export default function BorrowingsPage() {
     fetchBorrowings();
   }, [page, statusFilter, debouncedSearch]);
 
-  const handleReturn = async (borrowingId: number) => {
-    if (!confirm(t.confirmReturnMessage || t.confirmReturnPrompt)) {
-      return;
-    }
+  const handleConfirmReturn = async () => {
+    if (!returningBorrowing) return;
+    const borrowingId = returningBorrowing.id;
 
     setReturningId(borrowingId);
     setActionMessage(null);
     try {
       await api.post(`/borrowings/${borrowingId}/return`);
+      setReturningBorrowing(null);
       setActionMessage({
         type: "success",
         text: t.returnSuccess,
@@ -102,6 +104,7 @@ export default function BorrowingsPage() {
       fetchBorrowings();
       fetchCounts();
     } catch (err: any) {
+      setReturningBorrowing(null);
       setActionMessage({
         type: "error",
         text: err.response?.data?.detail || "Xatolik yuz berdi.",
@@ -351,7 +354,7 @@ export default function BorrowingsPage() {
                           <span className="text-[11px] text-oak-400 italic">{t.archived}</span>
                         ) : (
                           <button
-                            onClick={() => handleReturn(b.id)}
+                            onClick={() => setReturningBorrowing(b)}
                             disabled={returningId === b.id}
                             className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-bold bg-[#D1FAE5] text-[#059669] border border-[#A7F3D0] hover:bg-[#A7F3D0] transition-all disabled:opacity-50"
                           >
@@ -377,6 +380,26 @@ export default function BorrowingsPage() {
           loading={loading}
         />
       </div>
+
+      <ConfirmModal
+        isOpen={Boolean(returningBorrowing)}
+        onClose={() => setReturningBorrowing(null)}
+        onConfirm={handleConfirmReturn}
+        title={t.confirmReturnTitle}
+        description={t.confirmReturnMessage}
+        confirmLabel={t.yesReturnBook}
+        cancelLabel={t.cancel}
+        variant="emerald"
+        isLoading={returningId !== null}
+        contextBadge={
+          returningBorrowing
+            ? {
+                primary: returningBorrowing.book_title,
+                secondary: returningBorrowing.borrower_name || undefined,
+              }
+            : null
+        }
+      />
     </div>
   );
 }

@@ -29,6 +29,7 @@ export default function AdminsPage() {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const [role, setRole] = useState<"admin" | "librarian">("librarian");
+  const [createError, setCreateError] = useState<string | null>(null);
   const [submitting, setSubmitting] = useState(false);
 
   const [editingAdmin, setEditingAdmin] = useState<User | null>(null);
@@ -64,6 +65,7 @@ export default function AdminsPage() {
     e.preventDefault();
     setSubmitting(true);
     setActionMessage(null);
+    setCreateError(null);
     try {
       await api.post("/admins", {
         username: username.trim(),
@@ -76,7 +78,7 @@ export default function AdminsPage() {
       setRole("librarian");
       fetchAdmins();
     } catch (err: any) {
-      alert(err.response?.data?.detail || "Xatolik yuz berdi");
+      setCreateError(err.response?.data?.detail || "Xatolik yuz berdi");
     } finally {
       setSubmitting(false);
     }
@@ -178,7 +180,10 @@ export default function AdminsPage() {
         </div>
 
         <button
-          onClick={() => setShowAddModal(true)}
+          onClick={() => {
+            setCreateError(null);
+            setShowAddModal(true);
+          }}
           className="inline-flex items-center gap-1.5 px-4 py-2 text-xs font-bold rounded-lg bg-amber-500 text-oak-950 hover:bg-amber-600 transition-colors shadow-sm"
         >
           <UserPlus className="h-4 w-4" />
@@ -315,6 +320,12 @@ export default function AdminsPage() {
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 backdrop-blur-sm p-4">
           <div className="w-full max-w-md rounded-2xl border border-paper-border bg-white p-6 shadow-card space-y-4">
             <h3 className="text-base font-bold text-oak-900">{t.createOperator}</h3>
+            {createError && (
+              <div className="rounded-lg border border-red-200 bg-red-50 p-3 text-xs text-red-600 flex items-center gap-2">
+                <AlertCircle className="h-4 w-4 flex-shrink-0" />
+                <span>{createError}</span>
+              </div>
+            )}
             <form onSubmit={handleCreateAdmin} className="space-y-4">
               <div>
                 <label className="block text-xs font-semibold text-oak-700 mb-1">{t.usernameLabel}</label>

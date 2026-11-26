@@ -95,6 +95,7 @@ export default function BooksPage() {
   const handleCreateBook = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!newTitle.trim() || !newCatId) return;
+    setEditError("");
 
     try {
       await api.post("/books", {
@@ -107,13 +108,14 @@ export default function BooksPage() {
       setNewQty(1);
       fetchBooks();
     } catch (err: any) {
-      alert(err.response?.data?.detail || "Xatolik yuz berdi");
+      setEditError(err.response?.data?.detail || "Xatolik yuz berdi");
     }
   };
 
   const handleCreateCategory = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!newCatName.trim()) return;
+    setEditError("");
 
     try {
       await api.post("/books/categories", { name: newCatName.trim() });
@@ -121,7 +123,7 @@ export default function BooksPage() {
       setShowAddCat(false);
       fetchCategories();
     } catch (err: any) {
-      alert(err.response?.data?.detail || "Xatolik yuz berdi");
+      setEditError(err.response?.data?.detail || "Xatolik yuz berdi");
     }
   };
 
@@ -368,6 +370,11 @@ export default function BooksPage() {
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 backdrop-blur-sm p-4">
           <div className="w-full max-w-md rounded-2xl border border-paper-border bg-white p-6 shadow-card space-y-4">
             <h3 className="text-base font-bold text-oak-900">{t.addBook}</h3>
+            {editError && (
+              <div className="rounded-lg border border-red-200 bg-red-50 px-3 py-2 text-xs text-red-700">
+                {editError}
+              </div>
+            )}
             <form onSubmit={handleCreateBook} className="space-y-4">
               <div>
                 <label className="block text-xs font-semibold text-oak-700 mb-1">{t.bookTitle}</label>
@@ -581,6 +588,11 @@ export default function BooksPage() {
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 backdrop-blur-sm p-4">
           <div className="w-full max-w-sm rounded-2xl border border-paper-border bg-white p-6 shadow-card space-y-4">
             <h3 className="text-base font-bold text-oak-900">{t.addCategory}</h3>
+            {editError && (
+              <div className="rounded-lg border border-red-200 bg-red-50 px-3 py-2 text-xs text-red-700">
+                {editError}
+              </div>
+            )}
             <form onSubmit={handleCreateCategory} className="space-y-4">
               <div>
                 <label className="block text-xs font-semibold text-oak-700 mb-1">Toifa nomi</label>
